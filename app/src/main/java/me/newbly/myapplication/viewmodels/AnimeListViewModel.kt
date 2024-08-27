@@ -1,4 +1,4 @@
-package me.newbly.myapplication
+package me.newbly.myapplication.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData

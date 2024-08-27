@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/animeListFragment">
+
+    <fragment
+        android:id="@+id/animeDetailsFragment"
+        android:name="me.newbly.myapplication.fragments.AnimeDetailsFragment"
+        android:label="Anime Details"
+        tools:layout="@layout/fragment_anime_details" />
+    <fragment
+        android:id="@+id/animeListFragment"
+        android:name="me.newbly.myapplication.fragments.AnimeListFragment"
+        android:label="Anime List"
+        tools:layout="@layout/fragment_anime_list">
+        <action
+            android:id="@+id/action_animeListFragment_to_animeDetailsFragment"
+            app:destination="@id/animeDetailsFragment" />
+    </fragment>
+</navigation>

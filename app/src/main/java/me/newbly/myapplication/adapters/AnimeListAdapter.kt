@@ -1,12 +1,9 @@
-package me.newbly.myapplication
+package me.newbly.myapplication.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import me.newbly.myapplication.databinding.AnimeItemBinding
@@ -40,7 +37,8 @@ class AnimeListAdapter : RecyclerView.Adapter<AnimeListAdapter.ViewHolder>() {
         Picasso.get().load(animeList[position].images.jpg.large_image_url).into(holder.binding.animeImage)
 
         holder.binding.root.setOnClickListener {
-            Toast.makeText(it.context, animeList[position].title_japanese, Toast.LENGTH_SHORT).show()
+//            Toast.makeText(it.context, animeList[position].title_japanese, Toast.LENGTH_SHORT).show()
+            Log.d("ANIMELIST", "${animeList[position].title} (${animeList[position].title_japanese})")
         }
     }
 }

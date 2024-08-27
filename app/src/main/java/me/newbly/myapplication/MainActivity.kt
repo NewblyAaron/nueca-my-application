@@ -1,29 +1,28 @@
 package me.newbly.myapplication
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import me.newbly.myapplication.adapters.AnimeListAdapter
 import me.newbly.myapplication.databinding.ActivityMainBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Retrofit
-import retrofit2.Response
-import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.time.Duration
+import me.newbly.myapplication.fragments.AnimeDetailsFragment
+import me.newbly.myapplication.fragments.AnimeListFragment
+import me.newbly.myapplication.viewmodels.AnimeListViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var viewModel: AnimeListViewModel
-    private lateinit var animeListAdapter: AnimeListAdapter
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,17 +35,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        prepareRecyclerView()
-        viewModel = ViewModelProvider(this)[AnimeListViewModel::class.java]
-        viewModel.getAnimeList()
-        viewModel.observeAnimeListLiveData().observe(this, Observer { animeList -> animeListAdapter.setAnimeList(animeList) })
-    }
-
-    private fun prepareRecyclerView() {
-        animeListAdapter = AnimeListAdapter()
-        binding.rvAnimeList.apply {
-            layoutManager = GridLayoutManager(applicationContext, 2)
-            adapter = animeListAdapter
-        }
+        navController = supportFragmentManager.findFragmentById(binding.fragmentContainerView.id)!!.findNavController()
+        setSupportActionBar(binding.appbar)
+        setupActionBarWithNavController(navController)
     }
 }
