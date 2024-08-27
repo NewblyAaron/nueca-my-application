@@ -6,26 +6,33 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import me.newbly.myapplication.R
 import me.newbly.myapplication.adapters.AnimeListAdapter
+import me.newbly.myapplication.adapters.AnimeListClickListener
+import me.newbly.myapplication.databinding.FragmentAnimeDetailsBinding
 import me.newbly.myapplication.databinding.FragmentAnimeListBinding
+import me.newbly.myapplication.models.AnimeData
 import me.newbly.myapplication.viewmodels.AnimeListViewModel
 
-class AnimeListFragment : Fragment() {
-    private lateinit var binding: FragmentAnimeListBinding
-    private lateinit var animeListAdapter: AnimeListAdapter
+class AnimeListFragment : Fragment(), AnimeListClickListener {
 
     companion object {
         fun newInstance() = AnimeListFragment()
     }
 
     private val viewModel: AnimeListViewModel by viewModels()
+    private lateinit var binding: FragmentAnimeListBinding
+    private lateinit var animeListAdapter: AnimeListAdapter
+    private lateinit var listener: AnimeListClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentAnimeListBinding.inflate(layoutInflater)
+        listener = this
 
         prepareRecyclerView()
         viewModel.getAnimeList()
@@ -41,10 +48,15 @@ class AnimeListFragment : Fragment() {
     }
 
     private fun prepareRecyclerView() {
-        animeListAdapter = AnimeListAdapter()
+        animeListAdapter = AnimeListAdapter(listener)
         binding.rvAnimeList.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = animeListAdapter
         }
+    }
+
+    override fun onAnimeListItemClick(view: View, data: AnimeData) {
+        val action = AnimeListFragmentDirections.actionAnimeListFragmentToAnimeDetailsFragment(data)
+        findNavController().navigate(action)
     }
 }

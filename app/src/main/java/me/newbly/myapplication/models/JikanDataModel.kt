@@ -1,168 +1,275 @@
 package me.newbly.myapplication.models
 
+import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
 data class JikanDataModel(
-    val `data`: List<AnimeData>,
-    val pagination: Pagination
-)
+    @SerializedName("pagination")
+    val pagination: Pagination,
+    @SerializedName("data")
+    val `data`: List<AnimeData>
+) : Serializable
 
 data class Pagination(
-    val current_page: Int,
-    val has_next_page: Boolean,
-    val items: Items,
-    val last_visible_page: Int
-)
+    @SerializedName("last_visible_page")
+    val lastVisiblePage: Int,
+    @SerializedName("has_next_page")
+    val hasNextPage: Boolean,
+    @SerializedName("current_page")
+    val currentPage: Int,
+    @SerializedName("items")
+    val items: Items
+): Serializable
 
 data class AnimeData(
-    val aired: Aired,
-    val airing: Boolean,
-    val approved: Boolean,
-    val background: String,
-    val broadcast: Broadcast,
-    val demographics: List<Demographic>,
-    val duration: String,
-    val episodes: Int,
-    val explicit_genres: List<Any>,
-    val favorites: Int,
-    val genres: List<Genre>,
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("url")
+    val url: String,
+    @SerializedName("images")
     val images: Images,
-    val licensors: List<Licensor>,
-    val mal_id: Int,
-    val members: Int,
-    val popularity: Int,
-    val producers: List<Producer>,
-    val rank: Int,
-    val rating: String,
-    val score: Double,
-    val scored_by: Int,
-    val season: String,
-    val source: String,
-    val status: String,
-    val studios: List<Studio>,
-    val synopsis: String,
-    val themes: List<Theme>,
-    val title: String,
-    val title_english: String,
-    val title_japanese: String,
-    val title_synonyms: List<String>,
-    val titles: List<Title>,
+    @SerializedName("trailer")
     val trailer: Trailer,
-    val type: String,
-    val url: String,
-    val year: Int
-)
-
-data class Aired(
-    val from: String,
-    val prop: Prop,
-    val string: String,
-    val to: String
-)
-
-data class Broadcast(
-    val day: String,
-    val string: String,
-    val time: String,
-    val timezone: String
-)
-
-data class Demographic(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Genre(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Images(
-    val jpg: Jpg,
-    val webp: Webp
-)
-
-data class Licensor(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Producer(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Studio(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Theme(
-    val mal_id: Int,
-    val name: String,
-    val type: String,
-    val url: String
-)
-
-data class Title(
+    @SerializedName("approved")
+    val approved: Boolean,
+    @SerializedName("titles")
+    val titles: List<Title>,
+    @SerializedName("title")
     val title: String,
-    val type: String
-)
-
-data class Trailer(
-    val embed_url: String,
-    val images: ImagesX,
-    val url: String,
-    val youtube_id: String
-)
-
-data class Prop(
-    val from: From,
-    val to: To
-)
-
-data class From(
-    val day: Int,
-    val month: Int,
-    val year: Int
-)
-
-data class To(
-    val day: Int,
-    val month: Int,
-    val year: Int
-)
-
-data class Jpg(
-    val image_url: String,
-    val large_image_url: String,
-    val small_image_url: String
-)
-
-data class Webp(
-    val image_url: String,
-    val large_image_url: String,
-    val small_image_url: String
-)
-
-data class ImagesX(
-    val image_url: String,
-    val large_image_url: String,
-    val maximum_image_url: String,
-    val medium_image_url: String,
-    val small_image_url: String
-)
+    @SerializedName("title_english")
+    val titleEnglish: String?,
+    @SerializedName("title_japanese")
+    val titleJapanese: String,
+    @SerializedName("title_synonyms")
+    val titleSynonyms: List<String>,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("source")
+    val source: String,
+    @SerializedName("episodes")
+    val episodes: Int?,
+    @SerializedName("status")
+    val status: String,
+    @SerializedName("airing")
+    val airing: Boolean,
+    @SerializedName("aired")
+    val aired: Aired,
+    @SerializedName("duration")
+    val duration: String,
+    @SerializedName("rating")
+    val rating: String,
+    @SerializedName("score")
+    val score: Double,
+    @SerializedName("scored_by")
+    val scoredBy: Int,
+    @SerializedName("rank")
+    val rank: Int,
+    @SerializedName("popularity")
+    val popularity: Int,
+    @SerializedName("members")
+    val members: Int,
+    @SerializedName("favorites")
+    val favorites: Int,
+    @SerializedName("synopsis")
+    val synopsis: String,
+    @SerializedName("background")
+    val background: String,
+    @SerializedName("season")
+    val season: String?,
+    @SerializedName("year")
+    val year: Int?,
+    @SerializedName("broadcast")
+    val broadcast: Broadcast,
+    @SerializedName("producers")
+    val producers: List<Producer>,
+    @SerializedName("licensors")
+    val licensors: List<Licensor>,
+    @SerializedName("studios")
+    val studios: List<Studio>,
+    @SerializedName("genres")
+    val genres: List<Genre>,
+    @SerializedName("explicit_genres")
+    val explicitGenres: List<Any>,
+    @SerializedName("themes")
+    val themes: List<Theme>,
+    @SerializedName("demographics")
+    val demographics: List<Demographic>
+): Serializable
 
 data class Items(
+    @SerializedName("count")
     val count: Int,
-    val per_page: Int,
-    val total: Int
-)
+    @SerializedName("total")
+    val total: Int,
+    @SerializedName("per_page")
+    val perPage: Int
+): Serializable
+
+data class Images(
+    @SerializedName("jpg")
+    val jpg: Jpg,
+    @SerializedName("webp")
+    val webp: Webp
+): Serializable
+
+data class Trailer(
+    @SerializedName("youtube_id")
+    val youtubeId: String?,
+    @SerializedName("url")
+    val url: String?,
+    @SerializedName("embed_url")
+    val embedUrl: String?,
+    @SerializedName("images")
+    val images: ImagesX
+): Serializable
+
+data class Title(
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("title")
+    val title: String
+): Serializable
+
+data class Aired(
+    @SerializedName("from")
+    val from: String,
+    @SerializedName("to")
+    val to: String?,
+    @SerializedName("prop")
+    val prop: Prop,
+    @SerializedName("string")
+    val string: String
+): Serializable
+
+data class Broadcast(
+    @SerializedName("day")
+    val day: String?,
+    @SerializedName("time")
+    val time: String?,
+    @SerializedName("timezone")
+    val timezone: String?,
+    @SerializedName("string")
+    val string: String?
+): Serializable
+
+data class Producer(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Licensor(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Studio(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Genre(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Theme(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Demographic(
+    @SerializedName("mal_id")
+    val malId: Int,
+    @SerializedName("type")
+    val type: String,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("url")
+    val url: String
+): Serializable
+
+data class Jpg(
+    @SerializedName("image_url")
+    val imageUrl: String,
+    @SerializedName("small_image_url")
+    val smallImageUrl: String,
+    @SerializedName("large_image_url")
+    val largeImageUrl: String
+): Serializable
+
+data class Webp(
+    @SerializedName("image_url")
+    val imageUrl: String,
+    @SerializedName("small_image_url")
+    val smallImageUrl: String,
+    @SerializedName("large_image_url")
+    val largeImageUrl: String
+): Serializable
+
+data class ImagesX(
+    @SerializedName("image_url")
+    val imageUrl: String?,
+    @SerializedName("small_image_url")
+    val smallImageUrl: String?,
+    @SerializedName("medium_image_url")
+    val mediumImageUrl: String?,
+    @SerializedName("large_image_url")
+    val largeImageUrl: String?,
+    @SerializedName("maximum_image_url")
+    val maximumImageUrl: String?
+): Serializable
+
+data class Prop(
+    @SerializedName("from")
+    val from: From,
+    @SerializedName("to")
+    val to: To
+): Serializable
+
+data class From(
+    @SerializedName("day")
+    val day: Int,
+    @SerializedName("month")
+    val month: Int,
+    @SerializedName("year")
+    val year: Int
+): Serializable
+
+data class To(
+    @SerializedName("day")
+    val day: Int?,
+    @SerializedName("month")
+    val month: Int?,
+    @SerializedName("year")
+    val year: Int?
+): Serializable
