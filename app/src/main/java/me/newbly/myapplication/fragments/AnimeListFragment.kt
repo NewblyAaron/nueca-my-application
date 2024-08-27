@@ -6,15 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import me.newbly.myapplication.R
 import me.newbly.myapplication.adapters.AnimeListAdapter
 import me.newbly.myapplication.adapters.AnimeListClickListener
-import me.newbly.myapplication.databinding.FragmentAnimeDetailsBinding
 import me.newbly.myapplication.databinding.FragmentAnimeListBinding
+import me.newbly.myapplication.fragments.AnimeListFragmentDirections
 import me.newbly.myapplication.models.AnimeData
 import me.newbly.myapplication.viewmodels.AnimeListViewModel
 

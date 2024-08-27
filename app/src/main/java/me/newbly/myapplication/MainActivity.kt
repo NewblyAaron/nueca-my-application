@@ -5,20 +5,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.add
-import androidx.fragment.app.commit
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.recyclerview.widget.GridLayoutManager
-import me.newbly.myapplication.adapters.AnimeListAdapter
 import me.newbly.myapplication.databinding.ActivityMainBinding
-import me.newbly.myapplication.fragments.AnimeDetailsFragment
-import me.newbly.myapplication.fragments.AnimeListFragment
-import me.newbly.myapplication.viewmodels.AnimeListViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

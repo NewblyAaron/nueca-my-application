@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.navArgs
 import com.squareup.picasso.Picasso
-import me.newbly.myapplication.R
 import me.newbly.myapplication.databinding.FragmentAnimeDetailsBinding
-import me.newbly.myapplication.databinding.FragmentAnimeListBinding
 import me.newbly.myapplication.viewmodels.AnimeDetailsViewModel
 
 class AnimeDetailsFragment : Fragment() {
@@ -39,6 +37,6 @@ class AnimeDetailsFragment : Fragment() {
         Picasso.get().load(args.animeData.images.jpg.largeImageUrl).into(binding.animePoster)
         binding.engTitle.text = args.animeData.titleEnglish ?: args.animeData.title
         binding.japTitle.text = args.animeData.titleJapanese
-        binding.year.text = "(${args.animeData.year})"
+        binding.year.text = (args.animeData.year ?: "").toString()
     }
 }
