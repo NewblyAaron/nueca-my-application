@@ -6,11 +6,6 @@
     app:startDestination="@id/animeListFragment">
 
     <fragment
-        android:id="@+id/animeDetailsFragment"
-        android:name="me.newbly.myapplication.fragments.AnimeDetailsFragment"
-        android:label="Anime Details"
-        tools:layout="@layout/fragment_anime_details" />
-    <fragment
         android:id="@+id/animeListFragment"
         android:name="me.newbly.myapplication.fragments.AnimeListFragment"
         android:label="Anime List"
@@ -19,4 +14,19 @@
             android:id="@+id/action_animeListFragment_to_animeDetailsFragment"
             app:destination="@id/animeDetailsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/animeDetailsFragment"
+        android:name="me.newbly.myapplication.fragments.AnimeDetailsFragment"
+        android:label="Anime Details"
+        tools:layout="@layout/fragment_anime_details" >
+        <action
+            android:id="@+id/action_animeDetailsFragment_pop_including_animeListFragment"
+            app:popUpTo="@id/animeListFragment"
+            app:popUpToInclusive="true" />
+        <argument
+            android:name="animeData"
+            app:argType="me.newbly.myapplication.models.AnimeData" />
+    </fragment>
+
 </navigation>
