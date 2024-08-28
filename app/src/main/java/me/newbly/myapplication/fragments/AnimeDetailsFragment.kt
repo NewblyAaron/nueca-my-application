@@ -1,5 +1,6 @@
 package me.newbly.myapplication.fragments
 
+import android.annotation.SuppressLint
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -33,10 +34,13 @@ class AnimeDetailsFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         Picasso.get().load(args.animeData.images.jpg.largeImageUrl).into(binding.animePoster)
         binding.engTitle.text = args.animeData.titleEnglish ?: args.animeData.title
         binding.japTitle.text = args.animeData.titleJapanese
+        binding.episodes.text = "${args.animeData.episodes ?: "?"} episodes"
         binding.year.text = (args.animeData.year ?: "").toString()
+        binding.synopsis.text = args.animeData.synopsis
     }
 }

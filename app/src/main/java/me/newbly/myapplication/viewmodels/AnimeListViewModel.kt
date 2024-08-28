@@ -1,36 +1,57 @@
 package me.newbly.myapplication.viewmodels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.newbly.myapplication.models.AnimeData
-import me.newbly.myapplication.models.JikanDataModel
 import me.newbly.myapplication.repositories.JikanRepository
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class AnimeListViewModel : ViewModel() {
-    private var animeListLiveData = MutableLiveData<List<AnimeData>>()
+    private val repository = JikanRepository()
 
-    fun getAnimeList() {
-        JikanRepository.RetrofitInstance.api.getAnimes().enqueue(object: Callback<JikanDataModel> {
-            override fun onResponse(call: Call<JikanDataModel>, response: Response<JikanDataModel>) {
-                if (response.body() != null) {
-                    animeListLiveData.value = response.body()!!.data
-                } else {
-                    return
-                }
-            }
+    data class UiState(
+        val isLoading: Boolean = true,
+        val animeList: MutableList<AnimeData> = mutableListOf(),
+        val pageIndex: Int = 1
+    )
 
-            override fun onFailure(call: Call<JikanDataModel>, t: Throwable) {
-                Log.d("JikanApi", t.message.toString())
-            }
-        })
+    init {
+        getAnimeList(1)
     }
 
-    fun observeAnimeListLiveData(): LiveData<List<AnimeData>> {
-        return animeListLiveData
+    private val _state = MutableStateFlow(UiState())
+    val state: StateFlow<UiState>
+        get() = _state.asStateFlow()
+
+    private fun getAnimeList(pageIndex: Int) {
+        viewModelScope.launch {
+            Log.d("AnimeListViewModel", "fetching data from jikan")
+            _state.update { it.copy(isLoading = true) }
+            repository.getAnimeList(pageIndex)
+                .catch { e -> Log.d("AnimeListViewModel", e.message, e) }
+                .collect {
+                    list ->
+                        _state.update {
+                            val newAnimeList = _state.value.animeList.toMutableList()
+                            newAnimeList.addAll(list)
+                            it.copy(animeList = newAnimeList)
+                        }
+                    }
+            _state.update { it.copy(isLoading = false) }
+        }
+    }
+
+    fun loadNextPage() {
+        getAnimeList(state.value.pageIndex)
     }
 }
