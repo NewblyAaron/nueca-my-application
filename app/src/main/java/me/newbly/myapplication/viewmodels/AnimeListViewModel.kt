@@ -24,8 +24,8 @@ class AnimeListViewModel : ViewModel() {
 
     data class UiState(
         val isLoading: Boolean = true,
-        val animeList: MutableList<AnimeData> = mutableListOf(),
-        val pageIndex: Int = 1
+        val animeList: List<AnimeData> = emptyList(),
+        val pageIndex: Int = 0
     )
 
     init {
@@ -39,7 +39,7 @@ class AnimeListViewModel : ViewModel() {
     private fun getAnimeList(pageIndex: Int) {
         viewModelScope.launch {
             Log.d("AnimeListViewModel", "fetching data from jikan")
-            _state.update { it.copy(isLoading = true, animeList = mutableListOf(), pageIndex = pageIndex) }
+            _state.update { UiState(pageIndex = pageIndex) }
             repository.getAnimeList(pageIndex)
                 .catch { e -> Log.d("AnimeListViewModel", e.message, e) }
                 .collect {
@@ -48,13 +48,14 @@ class AnimeListViewModel : ViewModel() {
                             val newAnimeList = _state.value.animeList.toMutableList()
                             newAnimeList.addAll(list)
                             Log.d("AnimeListViewModel", "fetched new data")
-                            it.copy(animeList = newAnimeList, isLoading = false, pageIndex = pageIndex)
+                            it.copy(animeList = newAnimeList, isLoading = false)
                         }
                     }
         }
     }
 
     fun loadNextPage() {
-        getAnimeList(_state.value.pageIndex+1)
+        val nextPageIndex = _state.value.pageIndex + 1
+        getAnimeList(nextPageIndex)
     }
 }

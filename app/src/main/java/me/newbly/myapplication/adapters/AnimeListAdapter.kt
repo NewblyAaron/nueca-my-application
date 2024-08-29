@@ -16,14 +16,8 @@ interface AnimeListClickListener {
 }
 
 class AnimeListAdapter(private val animeListClickListener: AnimeListClickListener) : RecyclerView.Adapter<AnimeListAdapter.ViewHolder>() {
-    private var animeList = ArrayList<AnimeData>()
+    private val animeList = ArrayList<AnimeData>()
     private var _loadedPages = 0
-    val loadedPages
-        get() = _loadedPages
-
-    fun setAnimeList(animeList: List<AnimeData>) {
-        this.animeList = animeList as ArrayList<AnimeData>
-    }
 
     fun addToAnimeList(newData: List<AnimeData>) {
         animeList.addAll(newData)
