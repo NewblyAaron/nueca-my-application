@@ -17,10 +17,17 @@ interface AnimeListClickListener {
 
 class AnimeListAdapter(private val animeListClickListener: AnimeListClickListener) : RecyclerView.Adapter<AnimeListAdapter.ViewHolder>() {
     private var animeList = ArrayList<AnimeData>()
+    private var _loadedPages = 0
+    val loadedPages
+        get() = _loadedPages
 
-    @SuppressLint("NotifyDataSetChanged")
     fun setAnimeList(animeList: List<AnimeData>) {
         this.animeList = animeList as ArrayList<AnimeData>
+    }
+
+    fun addToAnimeList(newData: List<AnimeData>) {
+        animeList.addAll(newData)
+        _loadedPages++
     }
 
     class ViewHolder(val binding: AnimeItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -56,10 +63,9 @@ abstract class PaginationScrollListener : RecyclerView.OnScrollListener() {
         val totalItemCount = layoutManager.itemCount
         val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-        Log.d("PaginationScrollListener", "$visibleItemCount/$totalItemCount, $firstVisibleItemPosition")
-
         if (!isLoading()) {
             if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                Log.d("PaginationScrollListener", "loading more items")
                 loadMoreItems()
             }
         }

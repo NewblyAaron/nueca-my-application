@@ -40,6 +40,8 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("AnimeListFragment", "onCreate")
+
         binding = FragmentAnimeListBinding.inflate(layoutInflater)
         listener = this
 
@@ -50,58 +52,59 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("AnimeListFragment", "onCreateView")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d("AnimeListFragment", "onViewCreated")
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                viewModel.state
+                    .collectLatest { state ->
+                        if (!state.isLoading && state.animeList.isNotEmpty()) {
+                            binding.animeList.post {
+                                animeListAdapter.addToAnimeList(state.animeList)
+                                animeListAdapter.notifyItemRangeInserted(animeListAdapter.itemCount, state.animeList.count())
+                            }
+
+                            Log.d("AnimeListFragment", "fetched page ${state.pageIndex}")
+                        }
+                    }
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.state.collect {
-                    state ->
-                        when (state.isLoading) {
-                            true -> binding.progressBar.visibility = View.VISIBLE
-                            else -> binding.progressBar.visibility = View.GONE
-                        }
+                viewModel.state.collect { state ->
+                    when (state.isLoading) {
+                        true -> binding.progressBar.visibility = View.VISIBLE
+                        else -> binding.progressBar.visibility = View.GONE
+                    }
                 }
             }
         }
     }
 
+    override fun onAnimeListItemClick(view: View, data: AnimeData) {
+        val action = AnimeListFragmentDirections.actionAnimeListFragmentToAnimeDetailsFragment(data)
+        findNavController().navigate(action)
+    }
+
     private fun prepareRecyclerView() {
-        val recyclerView = binding.rvAnimeList
+        val recyclerView = binding.animeList
         animeListAdapter = AnimeListAdapter(listener)
         recyclerView.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = animeListAdapter
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.CREATED) {
-                viewModel.state.collect { state ->
-                    Log.d("AnimeListFragment", "collecting latest data")
-                    recyclerView.post {
-                        animeListAdapter.setAnimeList(state.animeList)
-                        animeListAdapter.notifyDataSetChanged()
-                    }
-                }
-            }
-        }
-
         val paginationOnScrollListener = object : PaginationScrollListener() {
             override fun isLoading(): Boolean = viewModel.state.value.isLoading
-
-            override fun loadMoreItems() {
-                viewModel.loadNextPage()
-            }
-
+            override fun loadMoreItems() = viewModel.loadNextPage()
         }
         recyclerView.addOnScrollListener(paginationOnScrollListener)
-    }
-
-    override fun onAnimeListItemClick(view: View, data: AnimeData) {
-        val action = AnimeListFragmentDirections.actionAnimeListFragmentToAnimeDetailsFragment(data)
-        findNavController().navigate(action)
     }
 }

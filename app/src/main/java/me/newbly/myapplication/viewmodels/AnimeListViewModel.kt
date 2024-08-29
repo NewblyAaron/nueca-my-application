@@ -9,8 +9,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.newbly.myapplication.models.AnimeData
@@ -36,7 +39,7 @@ class AnimeListViewModel : ViewModel() {
     private fun getAnimeList(pageIndex: Int) {
         viewModelScope.launch {
             Log.d("AnimeListViewModel", "fetching data from jikan")
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, animeList = mutableListOf(), pageIndex = pageIndex) }
             repository.getAnimeList(pageIndex)
                 .catch { e -> Log.d("AnimeListViewModel", e.message, e) }
                 .collect {
@@ -44,14 +47,14 @@ class AnimeListViewModel : ViewModel() {
                         _state.update {
                             val newAnimeList = _state.value.animeList.toMutableList()
                             newAnimeList.addAll(list)
-                            it.copy(animeList = newAnimeList)
+                            Log.d("AnimeListViewModel", "fetched new data")
+                            it.copy(animeList = newAnimeList, isLoading = false, pageIndex = pageIndex)
                         }
                     }
-            _state.update { it.copy(isLoading = false) }
         }
     }
 
     fun loadNextPage() {
-        getAnimeList(state.value.pageIndex)
+        getAnimeList(_state.value.pageIndex+1)
     }
 }

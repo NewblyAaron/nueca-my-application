@@ -3,23 +3,23 @@ package me.newbly.myapplication.models
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class JikanDataModel(
+data class JikanAnimeListDataModel(
     @SerializedName("pagination")
     val pagination: Pagination,
     @SerializedName("data")
     val `data`: List<AnimeData>
-) : Serializable
-
-data class Pagination(
-    @SerializedName("last_visible_page")
-    val lastVisiblePage: Int,
-    @SerializedName("has_next_page")
-    val hasNextPage: Boolean,
-    @SerializedName("current_page")
-    val currentPage: Int,
-    @SerializedName("items")
-    val items: Items
-): Serializable
+) : Serializable {
+    data class Pagination(
+        @SerializedName("last_visible_page")
+        val lastVisiblePage: Int,
+        @SerializedName("has_next_page")
+        val hasNextPage: Boolean,
+        @SerializedName("current_page")
+        val currentPage: Int,
+        @SerializedName("items")
+        val items: Items
+    ): Serializable
+}
 
 data class AnimeData(
     @SerializedName("mal_id")
