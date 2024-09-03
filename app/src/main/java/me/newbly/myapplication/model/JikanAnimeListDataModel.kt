@@ -1,4 +1,4 @@
-package me.newbly.myapplication.models
+package me.newbly.myapplication.model
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

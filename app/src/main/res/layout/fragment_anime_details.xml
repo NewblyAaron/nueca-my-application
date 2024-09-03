@@ -5,7 +5,7 @@
     android:id="@+id/fragment_anime_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AnimeDetailsFragment">
+    tools:context=".ui.AnimeDetailsFragment">
 
     <LinearLayout
         android:id="@+id/animeDetailsHeader"

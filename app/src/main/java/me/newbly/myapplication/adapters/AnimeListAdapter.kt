@@ -1,27 +1,23 @@
 package me.newbly.myapplication.adapters
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import me.newbly.myapplication.databinding.AnimeItemBinding
-import me.newbly.myapplication.models.AnimeData
+import me.newbly.myapplication.model.AnimeData
 
-interface AnimeListClickListener {
-    fun onAnimeListItemClick(view: View, data: AnimeData)
-}
+class AnimeListAdapter(private val animeListClickListener: AnimeListClickListener) :
+    PagingDataAdapter<AnimeData, AnimeListAdapter.ViewHolder>(AnimeDataDiffCallBack()) {
+    class AnimeDataDiffCallBack : DiffUtil.ItemCallback<AnimeData>()  {
+        override fun areItemsTheSame(oldItem: AnimeData, newItem: AnimeData): Boolean =
+            oldItem.malId == newItem.malId
 
-class AnimeListAdapter(private val animeListClickListener: AnimeListClickListener) : RecyclerView.Adapter<AnimeListAdapter.ViewHolder>() {
-    private val animeList = ArrayList<AnimeData>()
-    private var _loadedPages = 0
-
-    fun addToAnimeList(newData: List<AnimeData>) {
-        animeList.addAll(newData)
-        _loadedPages++
+        override fun areContentsTheSame(oldItem: AnimeData, newItem: AnimeData): Boolean =
+            oldItem == newItem
     }
 
     class ViewHolder(val binding: AnimeItemBinding) : RecyclerView.ViewHolder(binding.root)
@@ -36,35 +32,18 @@ class AnimeListAdapter(private val animeListClickListener: AnimeListClickListene
         )
     }
 
-    override fun getItemCount(): Int = animeList.count()
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.animeTitle.text = animeList[position].titleEnglish ?: animeList[position].title
-        Picasso.get().load(animeList[position].images.jpg.imageUrl).into(holder.binding.animeImage)
+        val repoItem = getItem(position)
+        holder.binding.animeTitle.text =
+            repoItem?.titleEnglish ?: repoItem?.title
+        Picasso.get().load(repoItem?.images?.jpg?.imageUrl).into(holder.binding.animeImage)
 
         holder.binding.root.setOnClickListener {
-            animeListClickListener.onAnimeListItemClick(it, animeList[position])
+            animeListClickListener.onAnimeListItemClick(it, repoItem!!)
         }
     }
 }
 
-abstract class PaginationScrollListener : RecyclerView.OnScrollListener() {
-    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-        super.onScrolled(recyclerView, dx, dy)
-
-        val layoutManager = recyclerView.layoutManager as GridLayoutManager
-        val visibleItemCount = layoutManager.findLastVisibleItemPosition()
-        val totalItemCount = layoutManager.itemCount
-        val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-        if (!isLoading()) {
-            if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
-                Log.d("PaginationScrollListener", "loading more items")
-                loadMoreItems()
-            }
-        }
-    }
-
-    abstract fun isLoading(): Boolean
-    abstract fun loadMoreItems()
+interface AnimeListClickListener {
+    fun onAnimeListItemClick(view: View, data: AnimeData)
 }

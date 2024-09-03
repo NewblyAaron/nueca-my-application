@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/animeListFragment"
-        android:name="me.newbly.myapplication.fragments.AnimeListFragment"
+        android:name="me.newbly.myapplication.ui.AnimeListFragment"
         android:label="Anime List"
         tools:layout="@layout/fragment_anime_list">
         <action
@@ -17,7 +17,7 @@
 
     <fragment
         android:id="@+id/animeDetailsFragment"
-        android:name="me.newbly.myapplication.fragments.AnimeDetailsFragment"
+        android:name="me.newbly.myapplication.ui.AnimeDetailsFragment"
         android:label="Anime Details"
         tools:layout="@layout/fragment_anime_details" >
         <action
@@ -26,7 +26,7 @@
             app:popUpToInclusive="true" />
         <argument
             android:name="animeData"
-            app:argType="me.newbly.myapplication.models.AnimeData" />
+            app:argType="me.newbly.myapplication.model.AnimeData" />
     </fragment>
 
 </navigation>
