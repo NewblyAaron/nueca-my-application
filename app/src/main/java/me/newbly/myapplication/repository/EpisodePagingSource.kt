@@ -32,7 +32,7 @@ class EpisodePagingSource(
             val data = response.body()!!.data
             val prevKey = if (position == STARTING_PAGE_INDEX) null else position - 1
             val nextKey =
-                if (data.isEmpty()) null else position + (params.loadSize / JikanRepository.EPISODE_PAGE_SIZE)
+                if (!response.body()!!.pagination.hasNextPage) null else position + (params.loadSize / JikanRepository.EPISODE_PAGE_SIZE)
 
             Log.d("EpisodePagingSource", "Loaded page $position to $nextKey")
 

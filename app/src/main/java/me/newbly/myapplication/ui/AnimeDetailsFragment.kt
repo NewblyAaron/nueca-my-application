@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,6 +18,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.withCreationCallback
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -27,17 +29,14 @@ import me.newbly.myapplication.model.EpisodeData
 
 @AndroidEntryPoint
 class AnimeDetailsFragment : Fragment() {
-    @Inject
-    lateinit var viewModelFactory: AnimeDetailsViewModelFactory
-    private lateinit var viewModel: AnimeDetailsViewModel
+    private val viewModel: AnimeDetailsViewModel by viewModels<AnimeDetailsViewModel>(extrasProducer = {
+        defaultViewModelCreationExtras.withCreationCallback<AnimeDetailsViewModel.Factory> { factory ->
+            factory.create(args.animeData.malId)
+        }
+    })
     private val args: me.newbly.myapplication.ui.AnimeDetailsFragmentArgs by navArgs()
     private lateinit var binding: FragmentAnimeDetailsBinding
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        viewModel = viewModelFactory.create(args.animeData.malId)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
