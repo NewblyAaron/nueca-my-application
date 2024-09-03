@@ -8,7 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import me.newbly.myapplication.api.JikanService
 import me.newbly.myapplication.model.AnimeData
 import me.newbly.myapplication.model.EpisodeData
+import javax.inject.Singleton
 
+@Singleton
 class JikanRepository @Inject constructor(private val service: JikanService) {
     fun getAnimeListResult(query: String): Flow<PagingData<AnimeData>> = Pager(
         config = PagingConfig(
