@@ -113,11 +113,11 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
         animeSearchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 updateAnimeListFromInput(onQueryChanged)
+                animeSearchView.clearFocus()
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                updateAnimeListFromInput(onQueryChanged)
                 return true
             }
         })

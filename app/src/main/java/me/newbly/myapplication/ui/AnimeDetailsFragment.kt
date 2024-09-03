@@ -34,7 +34,7 @@ class AnimeDetailsFragment : Fragment() {
             factory.create(args.animeData.malId)
         }
     })
-    private val args: me.newbly.myapplication.ui.AnimeDetailsFragmentArgs by navArgs()
+    private val args: AnimeDetailsFragmentArgs by navArgs()
     private lateinit var binding: FragmentAnimeDetailsBinding
 
 
