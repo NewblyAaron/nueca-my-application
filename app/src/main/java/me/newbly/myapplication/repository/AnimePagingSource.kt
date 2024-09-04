@@ -38,6 +38,8 @@ class AnimePagingSource(
             LoadResult.Error(e)
         } catch (e: IOException) {
             LoadResult.Error(e)
+        } catch (e: NullPointerException) {
+            LoadResult.Error(e)
         }
     }
 
