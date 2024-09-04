@@ -6,12 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
@@ -26,11 +25,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import me.newbly.myapplication.R
 import me.newbly.myapplication.adapters.AnimeListAdapter
 import me.newbly.myapplication.adapters.AnimeListClickListener
+import me.newbly.myapplication.adapters.AnimeListLoadStateAdapter
 import me.newbly.myapplication.databinding.FragmentAnimeListBinding
 import me.newbly.myapplication.model.AnimeData
-import me.newbly.myapplication.ui.AnimeDetailsFragmentDirections
 
 @AndroidEntryPoint
 class AnimeListFragment : Fragment(), AnimeListClickListener {
@@ -50,24 +50,12 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
             pagingData = viewModel.pagingDataFlow,
             uiActions = viewModel.accept
         )
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                animeListAdapter.loadStateFlow.collect {
-                    binding.progressBar.isVisible =
-                        it.source.append is LoadState.Loading
-                                || it.source.prepend is LoadState.Loading
-                                || it.source.refresh is LoadState.Loading
-                }
-            }
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.d("AnimeListFragment", "onCreateView")
         return binding.root
     }
 
@@ -90,8 +78,11 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
         uiActions: (AnimeListViewModel.UiAction) -> Unit
     ) {
         animeList.apply {
-            adapter = animeListAdapter
             layoutManager = GridLayoutManager(context, 2)
+            adapter = animeListAdapter.withLoadStateHeaderAndFooter(
+                header = AnimeListLoadStateAdapter { animeListAdapter.retry() },
+                footer = AnimeListLoadStateAdapter { animeListAdapter.retry() },
+            )
         }
 
         bindSearch(
@@ -118,6 +109,9 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText.isNullOrBlank()) {
+                    updateAnimeListFromInput(onQueryChanged)
+                }
                 return true
             }
         })
@@ -136,6 +130,7 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
         pagingData: Flow<PagingData<AnimeData>>,
         onScrollChanged: (AnimeListViewModel.UiAction.Scroll) -> Unit
     ) {
+        binding.fragmentAnimeListRetryButton.setOnClickListener { animeListAdapter.retry() }
         animeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) onScrollChanged(AnimeListViewModel.UiAction.Scroll(currentQuery = uiState.value.query))
@@ -166,9 +161,33 @@ class AnimeListFragment : Fragment(), AnimeListClickListener {
                 if (shouldScroll) animeList.scrollToPosition(0)
             }
         }
+
+        lifecycleScope.launch {
+            animeListAdapter.loadStateFlow.collect { loadState ->
+                val isListEmpty = loadState.refresh is LoadState.NotLoading && animeListAdapter.itemCount == 0
+                binding.fragmentAnimeListProgressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                binding.fragmentAnimeListRetryButton.isVisible = loadState.source.refresh is LoadState.Error
+                binding.fragmentAnimeListErrorText.isVisible = loadState.source.refresh is LoadState.Error
+                binding.animeList.isVisible = !isListEmpty
+
+                val errorState = loadState.source.append as? LoadState.Error
+                    ?: loadState.source.prepend as? LoadState.Error
+                    ?: loadState.append as? LoadState.Error
+                    ?: loadState.prepend as? LoadState.Error
+                errorState?.let {
+                    binding.fragmentAnimeListErrorText.text = it.error.localizedMessage
+                    Toast.makeText(
+                        this@AnimeListFragment.context,
+                        "${it.error}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 
-    private fun FragmentAnimeListBinding.updateAnimeListFromInput(onQueryChanged: (AnimeListViewModel.UiAction.Search) -> Unit) {
+    private fun FragmentAnimeListBinding.updateAnimeListFromInput(
+        onQueryChanged: (AnimeListViewModel.UiAction.Search) -> Unit) {
         animeSearchView.query.trim().let {
             if (it.isNotEmpty()) {
                 animeList.scrollToPosition(0)
