@@ -17,7 +17,9 @@ interface JikanService {
         @Query("page")
         pageIndex: Int,
         @Query("q")
-        query: String
+        query: String,
+        @Query("sfw")
+        sfw: Boolean = true
     ) : Response<JikanAnimeListDataModel>
 
     @GET("anime/{id}/episodes")
