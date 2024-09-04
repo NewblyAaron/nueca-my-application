@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import me.newbly.myapplication.R
 import me.newbly.myapplication.adapters.AnimeListAdapter
 import me.newbly.myapplication.adapters.AnimeListClickListener
 import me.newbly.myapplication.adapters.AnimeListLoadStateAdapter
