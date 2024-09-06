@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import me.newbly.myapplication.api.JikanService
-import me.newbly.myapplication.model.EpisodeData
+import me.newbly.myapplication.model.EpisodeListModel
+import me.newbly.myapplication.model.datamodel.EpisodeData
+import okio.IOException
 import retrofit2.HttpException
 
 class EpisodePagingSource(
@@ -32,12 +34,16 @@ class EpisodePagingSource(
             val data = response.body()!!.data
             val prevKey = if (position == STARTING_PAGE_INDEX) null else position - 1
             val nextKey =
-                if (!response.body()!!.pagination.hasNextPage) null else position + (params.loadSize / JikanRepository.EPISODE_PAGE_SIZE)
+                if (!response.body()!!.pagination.hasNextPage) null else position + (params.loadSize / EpisodeListModel.PAGE_SIZE)
 
             Log.d("EpisodePagingSource", "Loaded page $position to $nextKey")
 
             LoadResult.Page(data, prevKey, nextKey)
         } catch (e: HttpException) {
+            LoadResult.Error(e)
+        } catch (e: IOException) {
+            LoadResult.Error(e)
+        } catch (e: NullPointerException) {
             LoadResult.Error(e)
         }
     }

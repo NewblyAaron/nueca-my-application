@@ -6,7 +6,7 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import me.newbly.myapplication.databinding.EpisodeItemBinding
-import me.newbly.myapplication.model.EpisodeData
+import me.newbly.myapplication.model.datamodel.EpisodeData
 
 class EpisodeListAdapter : PagingDataAdapter<EpisodeData, EpisodeListAdapter.ViewHolder>(
     EpisodeDataDiffCallBack()

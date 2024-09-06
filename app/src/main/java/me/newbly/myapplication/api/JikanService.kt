@@ -1,7 +1,7 @@
 package me.newbly.myapplication.api
 
-import me.newbly.myapplication.model.JikanAnimeListDataModel
-import me.newbly.myapplication.model.JikanEpisodeListDataModel
+import me.newbly.myapplication.model.datamodel.JikanAnimeListDataModel
+import me.newbly.myapplication.model.datamodel.JikanEpisodeListDataModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
