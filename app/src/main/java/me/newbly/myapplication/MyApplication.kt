@@ -1,7 +1,14 @@
 package me.newbly.myapplication
 
 import android.app.Application
-import dagger.hilt.android.HiltAndroidApp
+import me.newbly.myapplication.api.JikanService
 
-@HiltAndroidApp
-open class MyApplication : Application()
+open class MyApplication : Application() {
+    lateinit var service: JikanService
+
+    override fun onCreate() {
+        super.onCreate()
+
+        service = JikanService.create()
+    }
+}

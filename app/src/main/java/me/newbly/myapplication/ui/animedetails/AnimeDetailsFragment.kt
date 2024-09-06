@@ -1,14 +1,12 @@
-package me.newbly.myapplication.ui
+package me.newbly.myapplication.ui.animedetails
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,34 +15,33 @@ import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.squareup.picasso.Picasso
-import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.withCreationCallback
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import me.newbly.myapplication.AnimeDetailsContract
+import me.newbly.myapplication.MyApplication
 import me.newbly.myapplication.adapters.EpisodeListAdapter
 import me.newbly.myapplication.databinding.FragmentAnimeDetailsBinding
-import me.newbly.myapplication.model.EpisodeData
+import me.newbly.myapplication.model.EpisodeListModel
+import me.newbly.myapplication.model.datamodel.EpisodeData
 
-@AndroidEntryPoint
-class AnimeDetailsFragment : Fragment() {
-    private val viewModel: AnimeDetailsViewModel by viewModels<AnimeDetailsViewModel>(extrasProducer = {
-        defaultViewModelCreationExtras.withCreationCallback<AnimeDetailsViewModel.Factory> { factory ->
-            factory.create(args.animeData.malId)
-        }
-    })
-    private val args: AnimeDetailsFragmentArgs by navArgs()
+class AnimeDetailsFragment : Fragment(), AnimeDetailsContract.View {
+
     private lateinit var binding: FragmentAnimeDetailsBinding
+    private lateinit var presenter: AnimeDetailsContract.Presenter
+    private lateinit var episodeListAdapter: EpisodeListAdapter
 
+    private val args: AnimeDetailsFragmentArgs by navArgs()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentAnimeDetailsBinding.inflate(layoutInflater)
 
-        val episodeListAdapter = EpisodeListAdapter()
-        binding.bindList(episodeListAdapter, viewModel.pagingDataFlow)
-
+        episodeListAdapter = EpisodeListAdapter()
+        binding.episodeList.apply {
+            adapter = episodeListAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 episodeListAdapter.loadStateFlow.collect {
@@ -61,6 +58,11 @@ class AnimeDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val service = (requireActivity().application as MyApplication).service
+        val model = EpisodeListModel(service)
+        presenter = AnimeDetailsPresenter(this, model)
+
+        presenter.loadPagingData(args.animeData.malId)
         return binding.root
     }
 
@@ -74,17 +76,11 @@ class AnimeDetailsFragment : Fragment() {
         binding.synopsis.text = args.animeData.synopsis
     }
 
-    private fun FragmentAnimeDetailsBinding.bindList(
-        episodeListAdapter: EpisodeListAdapter,
-        pagingDataFlow: Flow<PagingData<EpisodeData>>
-    ) {
-        binding.episodeList.apply {
-            adapter = episodeListAdapter
-            layoutManager = LinearLayoutManager(context)
-        }
-
+    override fun submitPagingData(pagingDataFlow: Flow<PagingData<EpisodeData>>) {
         lifecycleScope.launch {
-            pagingDataFlow.collectLatest(episodeListAdapter::submitData)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                pagingDataFlow.collectLatest { episodeListAdapter.submitData(it) }
+            }
         }
     }
 }
