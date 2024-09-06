@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     // alias(libs.plugins.jetbrains.kotlin.kapt)
     alias(libs.plugins.google.devtools.ksp)
-    alias(libs.plugins.dagger.hilt.android)
 
     id("androidx.navigation.safeargs")
 }
@@ -24,8 +23,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -68,10 +67,6 @@ dependencies {
     implementation(libs.androidx.paging.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     implementation(libs.logging.interceptor)
-    implementation(libs.dagger)
-    implementation(libs.dagger.hilt.android)
-    ksp(libs.dagger.compiler)
-    ksp(libs.dagger.hilt.android.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
